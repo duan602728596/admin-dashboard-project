@@ -1,0 +1,60 @@
+{
+  "name": "admin-dashboard",
+  "author": {
+    "name": "段昊辰",
+    "email": "duanhaochen@126.com"
+  },
+  "scripts": {
+    "eslint": "cross-env COMMITLINT=1 eslint ./ --fix --cache --cache-location .eslintcache",
+    "eslint:no-fix": "cross-env COMMITLINT=1 eslint ./ --cache --cache-location .eslintcache",
+    "dev": "vite dev",
+    "postinstall1": "husky install"
+  },
+  "private": true,
+  "packageManager": "yarn@4.9.2",
+  "dependencies": {
+    "@ant-design/icons": "^6.0.0",
+    "@reduxjs/toolkit": "^2.8.2",
+    "antd": "^5.26.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router": "^7.6.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.27.4",
+    "@babel/eslint-parser": "^7.27.5",
+    "@sweet-milktea/babel-preset-sweet": "^4.6.0",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@typescript-eslint/eslint-plugin": "^8.34.0",
+    "@typescript-eslint/parser": "^8.34.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "babel-plugin-react-compiler": "^19.1.0-rc.2",
+    "commitizen": "^4.3.0",
+    "cross-env": "^7.0.3",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^9.29.0",
+    "eslint-import-resolver-node": "^0.3.9",
+    "eslint-import-resolver-typescript": "^3.10.1",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.2.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.1",
+    "sass": "^1.89.2",
+    "tslib": "^2.8.1",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-checker": "^0.9.3",
+    "vite-plugin-mock-dev-server": "^1.8.7"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}": "cross-env COMMITLINT=1 eslint --cache --cache-location .eslintcache --no-warn-ignored"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  }
+}
