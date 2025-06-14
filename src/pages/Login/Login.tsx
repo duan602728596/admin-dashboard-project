@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import { useTransition, TransitionStartFunction, type ReactElement } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router';
 import { Form, Input, Button, App, type FormInstance } from 'antd';
 import type { Rule } from 'antd/es/form';
@@ -22,21 +22,24 @@ function Login(props: {}): ReactElement {
   const navigate: NavigateFunction = useNavigate();
   const [form]: [FormInstance<FormSubmitValue>] = Form.useForm();
   const { message: messageApi }: UseAppProps = App.useApp();
+  const [loginLoading, loginStartTransition]: [boolean, TransitionStartFunction] = useTransition();
 
   // 点击登录
-  async function handleLoginFormFinish(formSubmitValue: FormSubmitValue): Promise<void> {
-    const res: UserLoginResponse = await requestUserLogin(formSubmitValue.username, formSubmitValue.password);
+  function handleLoginFormFinish(formSubmitValue: FormSubmitValue): void {
+    loginStartTransition(async (): Promise<void> => {
+      const res: UserLoginResponse = await requestUserLogin(formSubmitValue.username, formSubmitValue.password);
 
-    if (res.code === 0) {
-      messageApi.error(res.errorMessage);
+      if (res.code === 0) {
+        messageApi.error(res.errorMessage);
 
-      return;
-    }
+        return;
+      }
 
-    messageApi.success('登录成功！');
-    setUserToken(res.data.token);
-    setUseInfo(res.data.userInfo);
-    navigate('/');
+      messageApi.success('登录成功！');
+      setUserToken(res.data.token);
+      setUseInfo(res.data.userInfo);
+      navigate('/');
+    });
   }
 
   return (
@@ -50,7 +53,7 @@ function Login(props: {}): ReactElement {
           <Form.Item name="password" label="密码" rules={ passwordRules }>
             <Input.Password />
           </Form.Item>
-          <Button className="mt-[18px]" type="primary" htmlType="submit" block={ true }>登录</Button>
+          <Button className="mt-[18px]" type="primary" htmlType="submit" block={ true } loading={ loginLoading }>登录</Button>
         </Form>
       </div>
     </div>
