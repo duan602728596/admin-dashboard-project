@@ -16,14 +16,20 @@
     "@ant-design/icons": "^6.0.0",
     "@reduxjs/toolkit": "^2.8.2",
     "antd": "^5.26.0",
+    "classnames": "^2.5.1",
+    "lodash-es": "^4.17.21",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-router": "^7.6.2"
+    "react-router": "^7.6.2",
+    "tailwindcss": "^4.1.10"
   },
   "devDependencies": {
     "@babel/core": "^7.27.4",
     "@babel/eslint-parser": "^7.27.5",
     "@sweet-milktea/babel-preset-sweet": "^4.6.0",
+    "@tailwindcss/vite": "^4.1.10",
+    "@types/cookies": "^0.9.1",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",

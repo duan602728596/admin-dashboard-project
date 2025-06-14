@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import viteReact from '@vitejs/plugin-react';
 import { checker as viteTsChecker } from 'vite-plugin-checker';
 import { mockDevServerPlugin } from 'vite-plugin-mock-dev-server';
+import tailwindcss from '@tailwindcss/vite';
 import { metaHelper } from '@sweet-milktea/utils';
 
 const { __dirname }: { __dirname: string } = metaHelper(import.meta.url);
@@ -50,7 +51,8 @@ export default defineConfig({
       },
       vls: false
     }),
-    mockDevServerPlugin()
+    mockDevServerPlugin(),
+    tailwindcss()
   ],
   server: {
     port: 5700,

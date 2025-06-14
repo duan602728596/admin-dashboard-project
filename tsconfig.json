@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
     "alwaysStrict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "target": "ESNext",
     "newLine": "LF",
     "resolveJsonModule": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
+    "module": "NodeNext",
     "jsx": "react-jsxdev",
     "importHelpers": true,
     "skipLibCheck": true
