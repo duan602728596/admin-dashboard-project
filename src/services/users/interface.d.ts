@@ -9,5 +9,8 @@ export interface UserLoginResponseData {
 
 export type UserLoginResponse = CoreResponseData<UserLoginResponseData>;
 
+// 刷新用户信息
+export type UserInfoResponse = CoreResponseData<UserItem>;
+
 // 用户列表
-export type UserListResponse = CoreResponseData<UserItem>;
+export type UserListResponse = CoreResponseData<Array<UserItem>>;

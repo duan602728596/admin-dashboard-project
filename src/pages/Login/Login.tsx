@@ -1,4 +1,6 @@
 import { useTransition, TransitionStartFunction, type ReactElement } from 'react';
+import { useDispatch } from 'react-redux';
+import type { Dispatch } from '@reduxjs/toolkit';
 import { useNavigate, NavigateFunction } from 'react-router';
 import { Form, Input, Button, App, type FormInstance } from 'antd';
 import type { Rule } from 'antd/es/form';
@@ -6,7 +8,8 @@ import type { useAppProps as UseAppProps } from 'antd/es//app/context';
 import cs from 'classnames';
 import style from './login.module.sass';
 import { requestUserLogin, type UserLoginResponse } from '../../services/users';
-import { setUserToken, setUseInfo } from '../../utils/users';
+import { setUserToken } from '../../utils/userToken';
+import { setUserInfo } from '../../reducers/userInfo.reducer';
 
 interface FormSubmitValue {
   username: string;
@@ -19,6 +22,7 @@ const usernameRules: Array<Rule> = [{ required: true, whitespace: true, message:
 
 /* 登录页面 */
 function Login(props: {}): ReactElement {
+  const dispatch: Dispatch = useDispatch();
   const navigate: NavigateFunction = useNavigate();
   const [form]: [FormInstance<FormSubmitValue>] = Form.useForm();
   const { message: messageApi }: UseAppProps = App.useApp();
@@ -37,7 +41,7 @@ function Login(props: {}): ReactElement {
 
       messageApi.success('登录成功！');
       setUserToken(res.data.token);
-      setUseInfo(res.data.userInfo);
+      dispatch(setUserInfo(res.data.userInfo));
       navigate('/');
     });
   }

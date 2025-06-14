@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { useRoutes } from 'react-router';
-import BasicLayout from '../components/BasicLayout/BasicLayout';
+import Root from '../components/Root/Root';
 import Login from '../pages/Login/Login';
 import Home from '../pages/Home/Home';
 import Users from '../pages/Users/Users';
@@ -14,7 +14,7 @@ function Routes(props: {}): ReactElement | null {
     },
     {
       path: '/',
-      element: <BasicLayout />,
+      element: <Root />,
       children: [
         { index: true, element: <Home /> },
         { path: 'Home', element: <Home /> },
