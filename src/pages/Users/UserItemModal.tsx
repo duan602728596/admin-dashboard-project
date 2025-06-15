@@ -1,12 +1,11 @@
 import { Fragment, useEffect, type ReactElement, type MouseEvent } from 'react';
 import { Form, Modal, Input, Radio, DatePicker, type FormInstance } from 'antd';
-import type { CheckboxOptionType } from 'antd/es/checkbox/Group';
 import type { Rule } from 'antd/es/form';
 import { omit } from 'lodash-es';
 import dayjs, { type Dayjs } from 'dayjs';
-import { UserGender } from '../../enum/gender.enum';
 import { UserStatus } from '../../enum/userStatus.enum';
 import { Permissions } from '../../enum/permissions.enum';
+import { genderRadioOptions, statusRadioOptions, permissionsRadioOptions } from './utils/formOptions';
 import type { UserItem } from '../../interface/user.interface';
 
 export interface FormValue extends Omit<UserItem, 'uid' | 'permissions' | 'birthday'> {
@@ -21,22 +20,6 @@ interface UserItemModalProps {
   onFormSubmit(values: FormValue, u: UserItem | undefined): (void | Promise<void>); // 表单确认，并提交
   onClose(event: MouseEvent<HTMLButtonElement>): void; // 关闭弹出层
 }
-
-// 搜索select options的配置
-const genderRadioOptions: Array<CheckboxOptionType> = [
-  { value: UserGender.Male, label: '男' },
-  { value: UserGender.Female, label: '女' }
-];
-
-const statusRadioOptions: Array<CheckboxOptionType> = [
-  { value: UserStatus.Available, label: '可用' },
-  { value: UserStatus.Deactivated, label: '不可用' }
-];
-
-const permissionsRadioOptions: Array<CheckboxOptionType> = [
-  { value: Permissions.Normal, label: '普通用户' },
-  { value: Permissions.Admin, label: '管理员' }
-];
 
 // 定义表单验证
 const usernameRules: Array<Rule> = [

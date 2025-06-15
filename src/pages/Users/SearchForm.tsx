@@ -1,32 +1,13 @@
 import type { ReactElement, MouseEvent } from 'react';
 import { Form, Input, Select, Button, type FormInstance } from 'antd';
-import { DefaultOptionType } from 'antd/es/select';
-import { UserGender } from '../../enum/gender.enum';
-import { UserStatus } from '../../enum/userStatus.enum';
+import { genderOptions, statusOptions } from './utils/formOptions';
 import type { UserListSearchFormSubmitValue } from '../../interface/user.interface';
-
-// 搜索select options的配置
-const genderOptions: Array<DefaultOptionType> = [
-  { value: 'all', label: '所有' },
-  { value: UserGender.Male, label: '男' },
-  { value: UserGender.Female, label: '女' }
-];
-
-const statusOptions: Array<DefaultOptionType> = [
-  { value: 'all', label: '所有' },
-  { value: UserStatus.Available, label: '可用' },
-  { value: UserStatus.Deactivated, label: <span className="text-[#f5222d]">停用</span> }
-];
 
 // 初始化表单的值
 const formInitialState: UserListSearchFormSubmitValue = {
   gender: 'all',
   status: 'all'
 };
-
-interface SearchFormProps {
-  onSearch(formValue: UserListSearchFormSubmitValue): void;
-}
 
 /**
  * 格式化表单的值
@@ -46,6 +27,10 @@ function formatUserListSearchFormSubmitValue(searchFormSubmitValue: UserListSear
   }
 
   return val;
+}
+
+interface SearchFormProps {
+  onSearch(formValue: UserListSearchFormSubmitValue): void;
 }
 
 /* 用户的搜索 */
