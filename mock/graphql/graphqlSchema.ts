@@ -35,7 +35,7 @@ export const graphQLSchema: GraphQLSchema = buildSchema(/* GraphQL */`
   type User {
     login(username: String, password: String): Login
     info: UserItem
-    list(current: Int): UserList
+    list(current: Int, search: String): UserList
   }
 
   type Query {

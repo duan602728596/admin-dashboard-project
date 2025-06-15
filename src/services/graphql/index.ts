@@ -1,5 +1,6 @@
 import { request, type RequestOptions } from '../../utils/request';
 import type { UserLoginResponse, UserInfoResponse, UserListResponse } from './interface';
+import type { UserListSearchFormSubmitValue } from '../../interface/user.interface';
 
 export type * from './interface';
 
@@ -68,15 +69,16 @@ export function requestUserInfo(): Promise<UserInfoResponse> {
 /**
  * 用户列表
  * @param { number } current - 分页
+ * @param { UserListSearchFormSubmitValue } search - 搜索条件
  */
-export function requestUserList(current: number): Promise<UserListResponse> {
+export function requestUserList(current: number, search: UserListSearchFormSubmitValue): Promise<UserListResponse> {
   return request({
     ...graphqlRequestDefaultOptions,
     body: {
       query: /* GraphQL */`
-        query($current: Int!) {
+        query($current: Int!, $search: String!) {
           user {
-            list(current: $current) {
+            list(current: $current, search: $search) {
               data {
                 uid
                 username
@@ -95,7 +97,8 @@ export function requestUserList(current: number): Promise<UserListResponse> {
         }
       `,
       variables: {
-        current
+        current,
+        search: JSON.stringify(search)
       }
     }
   });

@@ -2,7 +2,7 @@ import { omit, random } from 'lodash-es';
 import { userList } from '../user/userList';
 import { UserStatus } from '../../src/enum/userStatus.enum';
 import type { GraphQLContext } from '../types';
-import type { UserItem } from '../../src/interface/user.interface';
+import type { UserItem, UserListSearchFormSubmitValue } from '../../src/interface/user.interface';
 import type { UserLoginResponseData, UserListResponseData } from '../../src/services/graphql';
 
 interface UserLoginVariableValues {
@@ -12,6 +12,7 @@ interface UserLoginVariableValues {
 
 interface UserListVariableValues {
   current: number;
+  search: string;
 }
 
 interface GraphqlRootValue {
@@ -64,9 +65,26 @@ export const graphQLRootValue: GraphqlRootValue = {
       if (!contextValues.token) throw new Error('需要先登录');
 
       const width: number = 5;
-      const { current }: UserListVariableValues = variableValues;
+      const { current, search }: UserListVariableValues = variableValues;
+      const searchObject: UserListSearchFormSubmitValue = JSON.parse(search);
       const index: number = (current - 1) * width;
-      const formatUserList: Array<Omit<UserItem, 'password'>> = userList.map((o: UserItem): Omit<UserItem, 'password'> => omit(o, ['password']));
+      let formatUserList: Array<Omit<UserItem, 'password'>> = userList.map((o: UserItem): Omit<UserItem, 'password'> => omit(o, ['password']));
+
+
+      // 搜索用户名
+      if (searchObject.username && !/^\s*$/.test(searchObject.username)) {
+        formatUserList = formatUserList.filter((o: Omit<UserItem, 'password'>): boolean => o.username.includes(searchObject.username!));
+      }
+
+      // 性别
+      if (typeof searchObject.gender === 'number') {
+        formatUserList = formatUserList.filter((o: Omit<UserItem, 'password'>): boolean => o.gender === searchObject.gender);
+      }
+
+      // 状态
+      if (searchObject.status) {
+        formatUserList = formatUserList.filter((o: Omit<UserItem, 'password'>): boolean => o.status === searchObject.status);
+      }
 
       return {
         data: formatUserList.slice(index, index + width),

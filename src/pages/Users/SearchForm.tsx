@@ -1,14 +1,9 @@
-import type { ReactElement } from 'react';
+import type { ReactElement, MouseEvent } from 'react';
 import { Form, Input, Select, Button, type FormInstance } from 'antd';
 import { DefaultOptionType } from 'antd/es/select';
 import { UserGender } from '../../enum/gender.enum';
 import { UserStatus } from '../../enum/userStatus.enum';
-
-export interface SearchFormSubmitValue {
-  username?: string; // 搜索用户名
-  gender?: UserGender | 'all'; // 搜索性别
-  status?: UserStatus | 'all'; // 账号状态
-}
+import type { UserListSearchFormSubmitValue } from '../../interface/user.interface';
 
 // 搜索select options的配置
 const genderOptions: Array<DefaultOptionType> = [
@@ -24,26 +19,63 @@ const statusOptions: Array<DefaultOptionType> = [
 ];
 
 // 初始化表单的值
-const formInitialState: SearchFormSubmitValue = {
+const formInitialState: UserListSearchFormSubmitValue = {
   gender: 'all',
   status: 'all'
 };
 
+interface SearchFormProps {
+  onSearch(formValue: UserListSearchFormSubmitValue): void;
+}
+
+/**
+ * 格式化表单的值
+ * @param { UserListSearchFormSubmitValue } searchFormSubmitValue
+ */
+function formatUserListSearchFormSubmitValue(searchFormSubmitValue: UserListSearchFormSubmitValue): UserListSearchFormSubmitValue {
+  const val: UserListSearchFormSubmitValue = { ...searchFormSubmitValue };
+
+  if (val.status === 'all') delete val.status;
+
+  if (val.gender === 'all') delete val.gender;
+
+  for (const key in val) {
+    if (val[key] === undefined) {
+      delete val[key];
+    }
+  }
+
+  return val;
+}
+
 /* 用户的搜索 */
-function SearchForm(props: {}): ReactElement {
+function SearchForm(props: SearchFormProps): ReactElement {
+  const [form]: [FormInstance<UserListSearchFormSubmitValue>] = Form.useForm();
+
+  // 搜索提交
+  function handleSearchFinish(searchFormSubmitValue: UserListSearchFormSubmitValue): void {
+    props.onSearch(formatUserListSearchFormSubmitValue(searchFormSubmitValue));
+  }
+
+  // 重置
+  function handleResetClick(event: MouseEvent<HTMLButtonElement>): void {
+    form.resetFields();
+    props.onSearch(formatUserListSearchFormSubmitValue(form.getFieldsValue()));
+  }
+
   return (
-    <Form className="mb-[20px]" layout="inline" initialValues={ formInitialState }>
+    <Form className="mb-[20px]" form={ form } layout="inline" initialValues={ formInitialState } onFinish={ handleSearchFinish }>
       <Form.Item name="username" label="用户名">
-        <Input className="w-[200px]" />
+        <Input className="w-[200px]" allowClear={ true } />
       </Form.Item>
       <Form.Item name="gender" label="性别">
-        <Select className="!w-[100px]" options={ genderOptions } />
+        <Select className="!w-[100px]" options={ genderOptions } allowClear={ true } />
       </Form.Item>
       <Form.Item name="status" label="账号状态">
-        <Select className="!w-[100px]" options={ statusOptions } />
+        <Select className="!w-[100px]" options={ statusOptions } allowClear={ true } />
       </Form.Item>
-      <Button className="mr-[8px]" type="primary">搜索</Button>
-      <Button type="primary" danger={ true }>重置</Button>
+      <Button className="mr-[8px]" type="primary" htmlType="submit">搜索</Button>
+      <Button type="primary" danger={ true } onClick={ handleResetClick }>重置</Button>
     </Form>
   );
 }

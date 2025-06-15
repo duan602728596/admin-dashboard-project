@@ -13,3 +13,10 @@ export interface UserItem {
   birthday: string;   // 出生日期
   gender: UserGender; // 性别
 }
+
+/* 定义用户的搜索条件 */
+export interface UserListSearchFormSubmitValue {
+  username?: string; // 搜索用户名
+  gender?: UserGender | 'all'; // 搜索性别
+  status?: UserStatus | 'all'; // 账号状态
+}

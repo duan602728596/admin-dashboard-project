@@ -3,28 +3,30 @@ import { Table, App } from 'antd';
 import type { useAppProps as UseAppProps } from 'antd/es/app/context';
 import type { ColumnType } from 'antd/es/table/interface';
 import auth from '../../components/basic/auth/auth';
-import SearchForm, { type SearchFormSubmitValue } from './SearchForm';
+import SearchForm from './SearchForm';
 import { requestUserList, type UserListResponse } from '../../services/graphql';
 import { Permissions } from '../../enum/permissions.enum';
 import { UserGender } from '../../enum/gender.enum';
 import { UserStatus } from '../../enum/userStatus.enum';
-import type { UserItem } from '../../interface/user.interface';
+import type { UserItem, UserListSearchFormSubmitValue } from '../../interface/user.interface';
 
 /* 用户页面 */
 function Users(props: {}): ReactElement {
   const { message: messageApi }: UseAppProps = App.useApp();
-  const [current, setCurrent]: [number, D<S<number>>] = useState(1);
+  const [query, setQuery]: [UserListSearchFormSubmitValue, D<S<UserListSearchFormSubmitValue>>] = useState({}); // 查询条件
+  const [current, setCurrent]: [number, D<S<number>>] = useState(1); // 分页
   const [listLength, setListLength]: [number, D<S<number>>] = useState(0); // 结果数量
-  const [userList, setUserList]: [Array<UserItem>, D<S<Array<UserItem>>>] = useState([]);
+  const [userList, setUserList]: [Array<UserItem>, D<S<Array<UserItem>>>] = useState([]); // 查询结果
   const [loading, userListStartTransition]: [boolean, TransitionStartFunction] = useTransition();
 
   /**
    * 初始化获取数据
    * @param { number } c - 当前分页
+   * @param { UserListSearchFormSubmitValue } q - 搜索条件
    */
-  function getUserList(c: number): void {
+  function getUserList(c: number, q: UserListSearchFormSubmitValue): void {
     userListStartTransition(async (): Promise<void> => {
-      const res: UserListResponse = await requestUserList(c);
+      const res: UserListResponse = await requestUserList(c, q);
 
       if ('errors' in res) {
         messageApi.error(res.errors[0].message);
@@ -35,12 +37,18 @@ function Users(props: {}): ReactElement {
       setUserList(res.data.user.list.data);
       setCurrent(res.data.user.list.pagination.current);
       setListLength(res.data.user.list.pagination.length);
+      setQuery(q);
     });
   }
 
   // 修改分页
   function handlePageChange(page: number): void {
-    getUserList(page);
+    getUserList(page, query);
+  }
+
+  // 搜索提交
+  function handleFormSearch(val: UserListSearchFormSubmitValue): void {
+    getUserList(1, val);
   }
 
   const columns: Array<ColumnType<UserItem>> = [
@@ -70,16 +78,17 @@ function Users(props: {}): ReactElement {
   ];
 
   useEffect(function() {
-    getUserList(current);
+    getUserList(current, query);
   }, []);
 
   return (
     <div className="p-[20px]">
-      <SearchForm />
+      <SearchForm onSearch={ handleFormSearch } />
       <Table size="middle"
         dataSource={ userList }
         columns={ columns }
         loading={ loading }
+        rowKey="uid"
         pagination={{
           current,
           pageSize: 5,
