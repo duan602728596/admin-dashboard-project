@@ -1,6 +1,4 @@
 import { useTransition, TransitionStartFunction, type ReactElement } from 'react';
-import { useDispatch } from 'react-redux';
-import type { Dispatch } from '@reduxjs/toolkit';
 import { useNavigate, NavigateFunction } from 'react-router';
 import { Form, Input, Button, App, type FormInstance } from 'antd';
 import type { Rule } from 'antd/es/form';
@@ -22,7 +20,6 @@ const usernameRules: Array<Rule> = [{ required: true, whitespace: true, message:
 
 /* 登录页面 */
 function Login(props: {}): ReactElement {
-  const dispatch: Dispatch = useDispatch();
   const { setUserInfo }: UserInfoStore = useUserInfoStore();
   const navigate: NavigateFunction = useNavigate();
   const [form]: [FormInstance<FormSubmitValue>] = Form.useForm();
