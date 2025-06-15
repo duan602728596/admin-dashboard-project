@@ -41,5 +41,6 @@ export const graphqlUserSchema: string = /* GraphQL */`
     list(current: Int, search: String, birthdaySortOrder: String): UserList
     add(item: String): AddOrUpdateResult
     update(uid: String, item: String): AddOrUpdateResult
+    logout: AddOrUpdateResult
   }
 `;

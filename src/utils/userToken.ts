@@ -9,3 +9,8 @@ export function getUserToken(): string | null {
 export function setUserToken(userToken: string): void {
   localStorage.setItem(userTokenKey, userToken);
 }
+
+/* 清除token */
+export function deleteUserToken(): void {
+  localStorage.removeItem(userTokenKey);
+}

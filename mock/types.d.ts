@@ -3,9 +3,7 @@ import type { IncomingHttpHeaders, ServerResponse, IncomingMessage } from 'node:
 import type { Connect } from 'vite';
 import type { GetOption, SetOption } from 'cookies';
 
-/**
- * 扩展 request，添加额外的属性和方法
- */
+/* 扩展 request，添加额外的属性和方法 */
 interface ExtraRequest {
   query: Record<string, any>;
   refererQuery: Record<string, any>;

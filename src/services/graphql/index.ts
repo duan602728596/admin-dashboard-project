@@ -18,6 +18,7 @@ const graphqlRequestDefaultOptions: RequestOptions = {
 export function requestUserLogin(username: string, password: string): Promise<UserLoginResponse> {
   return request({
     ...graphqlRequestDefaultOptions,
+    useToken: false,
     body: {
       query: /* GraphQL */`
         query($username: String!, $password: String!) {
@@ -153,6 +154,25 @@ export function requestUpdateUser(uid: string, item: Omit<UserItem, 'uid' | 'pas
         item: JSON.stringify(item),
         uid
       }
+    }
+  });
+}
+
+/* 退出 */
+export function requestUserLogout(): Promise<UserAddOrUpdateResponse> {
+  return request({
+    ...graphqlRequestDefaultOptions,
+    body: {
+      query: /* GraphQL */`
+        query {
+          user {
+            logout {
+              success
+            }
+          }
+        }
+      `,
+      variables: null
     }
   });
 }

@@ -1,12 +1,12 @@
-import { useTransition, TransitionStartFunction, type ReactElement } from 'react';
+import { useEffect, useTransition, type TransitionStartFunction, type ReactElement } from 'react';
 import { useNavigate, NavigateFunction } from 'react-router';
 import { Form, Input, Button, App, type FormInstance } from 'antd';
 import type { Rule } from 'antd/es/form';
-import type { useAppProps as UseAppProps } from 'antd/es//app/context';
+import type { useAppProps as UseAppProps } from 'antd/es/app/context';
 import cs from 'classnames';
 import style from './login.module.sass';
 import { requestUserLogin, type UserLoginResponse } from '../../services/graphql';
-import { setUserToken } from '../../utils/userToken';
+import { getUserToken, setUserToken } from '../../utils/userToken';
 import { useUserInfoStore, type UserInfoStore } from '../../store/userInfo.store';
 
 interface FormSubmitValue {
@@ -43,6 +43,13 @@ function Login(props: {}): ReactElement {
       navigate('/Home');
     });
   }
+
+  useEffect(function() {
+    // 已登录的情况下跳转到首页
+    const userToken: string | null = getUserToken();
+
+    userToken && navigate('/Home');
+  }, []);
 
   return (
     <div className={ cs('w-full h-full content-center', style.container) }>

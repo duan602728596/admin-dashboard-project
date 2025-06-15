@@ -33,6 +33,7 @@ interface GraphqlRootValue {
     list(variableValues: UserListVariableValues, contextValues: GraphQLContext): UserListResponseData;
     add(variableValues: UserAddVariableValues, context: GraphQLContext): { success: boolean };
     update(variableValues: UserUpdateVariableValues, contextValues: GraphQLContext): { success: boolean };
+    logout(variableValues: null, context: GraphQLContext): { success: boolean };
   };
 }
 
@@ -147,6 +148,11 @@ export const graphQLRootValue: GraphqlRootValue = {
 
       Object.assign(userList[userItemIndex], updateItem);
 
+      return { success: true };
+    },
+
+    // 退出
+    logout(variableValues: null, contextValues: GraphQLContext): { success: boolean } {
       return { success: true };
     }
   }
