@@ -192,4 +192,4 @@ function Users(props: {}): ReactElement {
   );
 }
 
-export default auth([Permissions.Admin])(Users);
+export default auth([Permissions.Admin], true)(Users);
