@@ -1,22 +1,32 @@
 import { omit, random } from 'lodash-es';
 import { userList } from '../user/userList';
 import { UserStatus } from '../../src/enum/userStatus.enum';
-import type { UserItem } from '../../src/interface/user.interface';
-import type { UserLoginResponseData } from '../../src/services/graphql';
 import type { GraphQLContext } from '../types';
+import type { UserItem } from '../../src/interface/user.interface';
+import type { UserLoginResponseData, UserListResponseData } from '../../src/services/graphql';
+
+interface UserLoginVariableValues {
+  username: string;
+  password: string;
+}
+
+interface UserListVariableValues {
+  current: number;
+}
 
 interface GraphqlRootValue {
   user: {
-    login(args: { username: string; password: string }): UserLoginResponseData;
-    info(args: null, context: GraphQLContext): Omit<UserItem, 'password'>;
+    login(variableValues: UserLoginVariableValues): UserLoginResponseData;
+    info(variableValues: null, context: GraphQLContext): Omit<UserItem, 'password'>;
+    list(variableValues: UserListVariableValues, contextValues: GraphQLContext): UserListResponseData;
   };
 }
 
 export const graphQLRootValue: GraphqlRootValue = {
   user: {
     // 用户登录
-    login(variableValues: { username: string; password: string }): UserLoginResponseData {
-      const { username, password }: { username: string; password: string } = variableValues;
+    login(variableValues: UserLoginVariableValues): UserLoginResponseData {
+      const { username, password }: UserLoginVariableValues = variableValues;
 
       // 检查用户名
       const userItem: UserItem | undefined = userList.find((o: UserItem): boolean => o.username === username);
@@ -47,6 +57,24 @@ export const graphQLRootValue: GraphqlRootValue = {
       if (!userItem) throw new Error('账号不存在');
 
       return omit(userItem, ['password']);
+    },
+
+    // 用户列表
+    list(variableValues: UserListVariableValues, contextValues: GraphQLContext): UserListResponseData {
+      if (!contextValues.token) throw new Error('需要先登录');
+
+      const width: number = 5;
+      const { current }: UserListVariableValues = variableValues;
+      const index: number = (current - 1) * width;
+      const formatUserList: Array<Omit<UserItem, 'password'>> = userList.map((o: UserItem): Omit<UserItem, 'password'> => omit(o, ['password']));
+
+      return {
+        data: formatUserList.slice(index, index + width),
+        pagination: {
+          current,
+          length: formatUserList.length
+        }
+      };
     }
   }
 };

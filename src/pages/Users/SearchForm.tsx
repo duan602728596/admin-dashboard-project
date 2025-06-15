@@ -4,7 +4,7 @@ import { DefaultOptionType } from 'antd/es/select';
 import { UserGender } from '../../enum/gender.enum';
 import { UserStatus } from '../../enum/userStatus.enum';
 
-interface SearchFormSubmitValue {
+export interface SearchFormSubmitValue {
   username?: string; // 搜索用户名
   gender?: UserGender | 'all'; // 搜索性别
   status?: UserStatus | 'all'; // 账号状态

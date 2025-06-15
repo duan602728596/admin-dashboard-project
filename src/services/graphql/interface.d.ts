@@ -19,3 +19,18 @@ export type UserInfoResponse = GraphQLResponseData<{
     info: UserItem;
   };
 }>;
+
+// 获取账号的列表
+export interface UserListResponseData {
+  data: Array<UserItem>;
+  pagination: {
+    current: number;
+    length: number;
+  };
+}
+
+export type UserListResponse = GraphQLResponseData<{
+  user: {
+    list: UserListResponseData
+  }
+}>;

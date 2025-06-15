@@ -2,6 +2,7 @@ import { buildSchema, type GraphQLSchema } from 'graphql';
 
 // 定义 GraphQL schema（mock 结构）
 export const graphQLSchema: GraphQLSchema = buildSchema(/* GraphQL */`
+  # 用户信息
   type UserItem {
     uid: String,
     username: String,
@@ -13,14 +14,28 @@ export const graphQLSchema: GraphQLSchema = buildSchema(/* GraphQL */`
     gender: Int
   }
 
+  # 登录
   type Login {
     token: String,
     userInfo: UserItem
   }
 
+  # 分页
+  type Pagination {
+    current: Int, # 当前页
+    length: Int   # 总页数
+  }
+
+  # 用户列表
+  type UserList {
+    data: [UserItem],
+    pagination: Pagination
+  }
+
   type User {
     login(username: String, password: String): Login
     info: UserItem
+    list(current: Int): UserList
   }
 
   type Query {

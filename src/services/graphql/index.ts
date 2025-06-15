@@ -1,5 +1,5 @@
 import { request, type RequestOptions } from '../../utils/request';
-import type { UserLoginResponse, UserInfoResponse } from './interface';
+import type { UserLoginResponse, UserInfoResponse, UserListResponse } from './interface';
 
 export type * from './interface';
 
@@ -61,6 +61,42 @@ export function requestUserInfo(): Promise<UserInfoResponse> {
         }
       `,
       variables: null
+    }
+  });
+}
+
+/**
+ * 用户列表
+ * @param { number } current - 分页
+ */
+export function requestUserList(current: number): Promise<UserListResponse> {
+  return request({
+    ...graphqlRequestDefaultOptions,
+    body: {
+      query: /* GraphQL */`
+        query($current: Int!) {
+          user {
+            list(current: $current) {
+              data {
+                uid
+                username
+                email
+                status
+                permissions
+                birthday
+                gender
+              }
+              pagination {
+                current
+                length
+              }
+            }
+          }
+        }
+      `,
+      variables: {
+        current
+      }
     }
   });
 }
