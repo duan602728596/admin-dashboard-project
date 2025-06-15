@@ -1,3 +1,4 @@
+import type { SortOrder } from 'antd/es/table/interface';
 import { request, type RequestOptions } from '../../utils/request';
 import type { UserLoginResponse, UserInfoResponse, UserListResponse } from './interface';
 import type { UserListSearchFormSubmitValue } from '../../interface/user.interface';
@@ -70,15 +71,16 @@ export function requestUserInfo(): Promise<UserInfoResponse> {
  * 用户列表
  * @param { number } current - 分页
  * @param { UserListSearchFormSubmitValue } search - 搜索条件
+ * @param { SortOrder } birthdaySortOrder - 生日的排序
  */
-export function requestUserList(current: number, search: UserListSearchFormSubmitValue): Promise<UserListResponse> {
+export function requestUserList(current: number, search: UserListSearchFormSubmitValue, birthdaySortOrder: SortOrder): Promise<UserListResponse> {
   return request({
     ...graphqlRequestDefaultOptions,
     body: {
       query: /* GraphQL */`
-        query($current: Int!, $search: String!) {
+        query($current: Int!, $search: String!, $birthdaySortOrder: String) {
           user {
-            list(current: $current, search: $search) {
+            list(current: $current, search: $search, birthdaySortOrder: $birthdaySortOrder) {
               data {
                 uid
                 username
@@ -98,7 +100,8 @@ export function requestUserList(current: number, search: UserListSearchFormSubmi
       `,
       variables: {
         current,
-        search: JSON.stringify(search)
+        search: JSON.stringify(search),
+        birthdaySortOrder
       }
     }
   });

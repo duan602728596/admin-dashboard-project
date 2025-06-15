@@ -1,7 +1,14 @@
 import { useState, useEffect, useTransition, type ReactElement, type Dispatch as D, type SetStateAction as S, type TransitionStartFunction } from 'react';
 import { Table, App } from 'antd';
 import type { useAppProps as UseAppProps } from 'antd/es/app/context';
-import type { ColumnType } from 'antd/es/table/interface';
+import type {
+  ColumnType,
+  SortOrder,
+  FilterValue,
+  SorterResult,
+  TablePaginationConfig,
+  TableCurrentDataSource
+} from 'antd/es/table/interface';
 import auth from '../../components/basic/auth/auth';
 import SearchForm from './SearchForm';
 import { requestUserList, type UserListResponse } from '../../services/graphql';
@@ -15,6 +22,7 @@ function Users(props: {}): ReactElement {
   const { message: messageApi }: UseAppProps = App.useApp();
   const [query, setQuery]: [UserListSearchFormSubmitValue, D<S<UserListSearchFormSubmitValue>>] = useState({}); // 查询条件
   const [current, setCurrent]: [number, D<S<number>>] = useState(1); // 分页
+  const [birthdaySortOrder, setBirthdaySortOrder]: [SortOrder, D<S<SortOrder>>] = useState(null);
   const [listLength, setListLength]: [number, D<S<number>>] = useState(0); // 结果数量
   const [userList, setUserList]: [Array<UserItem>, D<S<Array<UserItem>>>] = useState([]); // 查询结果
   const [loading, userListStartTransition]: [boolean, TransitionStartFunction] = useTransition();
@@ -23,10 +31,11 @@ function Users(props: {}): ReactElement {
    * 初始化获取数据
    * @param { number } c - 当前分页
    * @param { UserListSearchFormSubmitValue } q - 搜索条件
+   * @param { SortOrder } bo - 生日排序
    */
-  function getUserList(c: number, q: UserListSearchFormSubmitValue): void {
+  function getUserList(c: number, q: UserListSearchFormSubmitValue, bo: SortOrder): void {
     userListStartTransition(async (): Promise<void> => {
-      const res: UserListResponse = await requestUserList(c, q);
+      const res: UserListResponse = await requestUserList(c, q, bo);
 
       if ('errors' in res) {
         messageApi.error(res.errors[0].message);
@@ -38,17 +47,29 @@ function Users(props: {}): ReactElement {
       setCurrent(res.data.user.list.pagination.current);
       setListLength(res.data.user.list.pagination.length);
       setQuery(q);
+      setBirthdaySortOrder(bo);
     });
   }
 
   // 修改分页
   function handlePageChange(page: number): void {
-    getUserList(page, query);
+    getUserList(page, query, birthdaySortOrder);
   }
 
   // 搜索提交
   function handleFormSearch(val: UserListSearchFormSubmitValue): void {
-    getUserList(1, val);
+    getUserList(1, val, birthdaySortOrder);
+  }
+
+  // 修改排序
+  function handleTableChange(pagination: TablePaginationConfig, filters: Record<string, FilterValue | null>, sorter: SorterResult<UserItem> | SorterResult<UserItem>[], extra: TableCurrentDataSource<UserItem>): void {
+    if (extra.action === 'sort' && !Array.isArray(sorter)) {
+      if (sorter.field === 'birthday') {
+        getUserList(1, query, sorter.order ?? null);
+      } else {
+        getUserList(1, query, null);
+      }
+    }
   }
 
   const columns: Array<ColumnType<UserItem>> = [
@@ -69,7 +90,9 @@ function Users(props: {}): ReactElement {
     },
     {
       title: '生日',
-      dataIndex: 'birthday'
+      dataIndex: 'birthday',
+      sorter: true,
+      sortOrder: birthdaySortOrder
     },
     {
       title: '账号状态',
@@ -78,7 +101,7 @@ function Users(props: {}): ReactElement {
   ];
 
   useEffect(function() {
-    getUserList(current, query);
+    getUserList(current, query, birthdaySortOrder);
   }, []);
 
   return (
@@ -95,6 +118,7 @@ function Users(props: {}): ReactElement {
           total: listLength,
           onChange: handlePageChange
         }}
+        onChange={ handleTableChange }
       />
     </div>
   );

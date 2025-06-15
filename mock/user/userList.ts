@@ -23,7 +23,7 @@ export const userList: Array<UserItem> = [
     email: 'test_1@gmail.com',
     status: UserStatus.Available,
     permissions: [Permissions.Admin],
-    birthday: '1992-07-22',
+    birthday: '1997-07-22',
     gender: UserGender.Female
   },
   // 普通账户
@@ -34,7 +34,7 @@ export const userList: Array<UserItem> = [
     email: 'test_2@gmail.com',
     status: UserStatus.Available,
     permissions: [Permissions.Normal],
-    birthday: '1992-07-22',
+    birthday: '1989-07-22',
     gender: UserGender.Male
   },
   {
@@ -44,7 +44,7 @@ export const userList: Array<UserItem> = [
     email: 'test_3@gmail.com',
     status: UserStatus.Available,
     permissions: [Permissions.Normal],
-    birthday: '1992-07-22',
+    birthday: '1994-07-22',
     gender: UserGender.Female
   },
   {
@@ -54,7 +54,7 @@ export const userList: Array<UserItem> = [
     email: 'test_3@gmail.com',
     status: UserStatus.Available,
     permissions: [Permissions.Normal],
-    birthday: '1992-07-22',
+    birthday: '1990-07-22',
     gender: UserGender.Male
   },
   {
@@ -64,7 +64,7 @@ export const userList: Array<UserItem> = [
     email: 'test_3@gmail.com',
     status: UserStatus.Available,
     permissions: [Permissions.Normal],
-    birthday: '1992-07-22',
+    birthday: '1991-07-22',
     gender: UserGender.Female
   },
   {
@@ -74,7 +74,7 @@ export const userList: Array<UserItem> = [
     email: 'test_6@gmail.com',
     status: UserStatus.Available,
     permissions: [Permissions.Normal],
-    birthday: '1992-07-22',
+    birthday: '1993-07-22',
     gender: UserGender.Male
   },
   {
@@ -84,7 +84,7 @@ export const userList: Array<UserItem> = [
     email: 'test_7@gmail.com',
     status: UserStatus.Available,
     permissions: [Permissions.Normal],
-    birthday: '1992-07-22',
+    birthday: '1986-07-22',
     gender: UserGender.Female
   },
   {
@@ -94,7 +94,7 @@ export const userList: Array<UserItem> = [
     email: 'test_8@gmail.com',
     status: UserStatus.Available,
     permissions: [Permissions.Normal],
-    birthday: '1992-07-22',
+    birthday: '1988-07-22',
     gender: UserGender.Male
   },
   {
@@ -104,7 +104,7 @@ export const userList: Array<UserItem> = [
     email: 'test_9@gmail.com',
     status: UserStatus.Available,
     permissions: [Permissions.Normal],
-    birthday: '1992-07-22',
+    birthday: '2002-07-22',
     gender: UserGender.Female
   },
   // 无法登录的
@@ -115,7 +115,7 @@ export const userList: Array<UserItem> = [
     email: 'test_10@gmail.com',
     status: UserStatus.Deactivated,
     permissions: [Permissions.Normal],
-    birthday: '1992-07-22',
+    birthday: '1999-07-22',
     gender: UserGender.Male
   },
   {
@@ -125,7 +125,7 @@ export const userList: Array<UserItem> = [
     email: 'test_11@gmail.com',
     status: UserStatus.Deactivated,
     permissions: [Permissions.Normal],
-    birthday: '1992-07-22',
+    birthday: '2003-07-22',
     gender: UserGender.Female
   }
 ];

@@ -1,4 +1,6 @@
 import { omit, random } from 'lodash-es';
+import dayjs from 'dayjs';
+import type { SortOrder } from 'antd/es/table/interface';
 import { userList } from '../user/userList';
 import { UserStatus } from '../../src/enum/userStatus.enum';
 import type { GraphQLContext } from '../types';
@@ -13,6 +15,7 @@ interface UserLoginVariableValues {
 interface UserListVariableValues {
   current: number;
   search: string;
+  birthdaySortOrder: SortOrder;
 }
 
 interface GraphqlRootValue {
@@ -65,7 +68,7 @@ export const graphQLRootValue: GraphqlRootValue = {
       if (!contextValues.token) throw new Error('需要先登录');
 
       const width: number = 5;
-      const { current, search }: UserListVariableValues = variableValues;
+      const { current, search, birthdaySortOrder }: UserListVariableValues = variableValues;
       const searchObject: UserListSearchFormSubmitValue = JSON.parse(search);
       const index: number = (current - 1) * width;
       let formatUserList: Array<Omit<UserItem, 'password'>> = userList.map((o: UserItem): Omit<UserItem, 'password'> => omit(o, ['password']));
@@ -84,6 +87,15 @@ export const graphQLRootValue: GraphqlRootValue = {
       // 状态
       if (searchObject.status) {
         formatUserList = formatUserList.filter((o: Omit<UserItem, 'password'>): boolean => o.status === searchObject.status);
+      }
+
+      // 生日排序，按年纪大小
+      if (birthdaySortOrder === 'ascend') {
+        // 低 -> 高
+        formatUserList.sort((a: Omit<UserItem, 'password'>, b: Omit<UserItem, 'password'>): number => dayjs(b.birthday).valueOf() - dayjs(a.birthday).valueOf());
+      } else if (birthdaySortOrder === 'descend') {
+        // 高 -> 低
+        formatUserList.sort((a: Omit<UserItem, 'password'>, b: Omit<UserItem, 'password'>): number => dayjs(a.birthday).valueOf() - dayjs(b.birthday).valueOf());
       }
 
       return {
