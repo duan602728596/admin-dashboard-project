@@ -1,17 +1,13 @@
 import { useEffect, useTransition, type ReactElement, type TransitionStartFunction } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import type { Dispatch } from '@reduxjs/toolkit';
 import { App } from 'antd';
 import type { useAppProps as UseAppProps } from 'antd/es//app/context';
 import RootLayout from '../RootLayout/RootLayout';
 import { requestUserInfo, type UserInfoResponse } from '../../services/users';
-import { setUserInfo, type UserInfoInitialState } from '../../reducers/userInfo.reducer';
-import { userInfoSelector } from '../../reducers/userInfo.selector';
+import { useUserInfoStore, type UserInfoStore } from '../../store/userInfo.store';
 
 /* 根组件，判断是否登录，并且在登录后每次加载时重新获取用户信息 */
 function Root(props: {}): ReactElement | null {
-  const { userInfo }: UserInfoInitialState = useSelector(userInfoSelector);
-  const dispatch: Dispatch = useDispatch();
+  const { userInfo, setUserInfo }: UserInfoStore = useUserInfoStore();
   const [userInfoLoading, userInfoStartTransition]: [boolean, TransitionStartFunction] = useTransition();
   const { message: messageApi }: UseAppProps = App.useApp();
 
@@ -28,7 +24,7 @@ function Root(props: {}): ReactElement | null {
         return;
       }
 
-      dispatch(setUserInfo(res.data));
+      setUserInfo(res.data);
     });
   }
 

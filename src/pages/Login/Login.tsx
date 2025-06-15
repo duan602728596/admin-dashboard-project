@@ -9,7 +9,7 @@ import cs from 'classnames';
 import style from './login.module.sass';
 import { requestUserLogin, type UserLoginResponse } from '../../services/users';
 import { setUserToken } from '../../utils/userToken';
-import { setUserInfo } from '../../reducers/userInfo.reducer';
+import { useUserInfoStore, type UserInfoStore } from '../../store/userInfo.store';
 
 interface FormSubmitValue {
   username: string;
@@ -23,6 +23,7 @@ const usernameRules: Array<Rule> = [{ required: true, whitespace: true, message:
 /* 登录页面 */
 function Login(props: {}): ReactElement {
   const dispatch: Dispatch = useDispatch();
+  const { setUserInfo }: UserInfoStore = useUserInfoStore();
   const navigate: NavigateFunction = useNavigate();
   const [form]: [FormInstance<FormSubmitValue>] = Form.useForm();
   const { message: messageApi }: UseAppProps = App.useApp();
@@ -41,7 +42,7 @@ function Login(props: {}): ReactElement {
 
       messageApi.success('登录成功！');
       setUserToken(res.data.token);
-      dispatch(setUserInfo(res.data.userInfo));
+      setUserInfo(res.data.userInfo);
       navigate('/');
     });
   }

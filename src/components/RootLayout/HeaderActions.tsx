@@ -1,13 +1,11 @@
 import { Fragment, type ReactElement } from 'react';
-import { useSelector } from 'react-redux';
 import { Button, Tooltip } from 'antd';
 import { UserOutlined as IconUserOutlined, LogoutOutlined as IconLogoutOutlined } from '@ant-design/icons';
-import type { UserInfoInitialState } from '../../reducers/userInfo.reducer';
-import { userInfoSelector } from '../../reducers/userInfo.selector';
+import { useUserInfoStore, type UserInfoStore } from '../../store/userInfo.store';
 
 /* Header */
 function HeaderActions(props: {}): ReactElement | null {
-  const { userInfo }: UserInfoInitialState = useSelector(userInfoSelector);
+  const { userInfo }: UserInfoStore = useUserInfoStore();
 
   if (!userInfo) return null;
 
