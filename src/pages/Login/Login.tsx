@@ -5,7 +5,7 @@ import type { Rule } from 'antd/es/form';
 import type { useAppProps as UseAppProps } from 'antd/es//app/context';
 import cs from 'classnames';
 import style from './login.module.sass';
-import { requestUserLogin, type UserLoginResponse } from '../../services/users';
+import { requestUserLogin, type UserLoginResponse } from '../../services/graphql';
 import { setUserToken } from '../../utils/userToken';
 import { useUserInfoStore, type UserInfoStore } from '../../store/userInfo.store';
 
@@ -31,15 +31,15 @@ function Login(props: {}): ReactElement {
     loginStartTransition(async (): Promise<void> => {
       const res: UserLoginResponse = await requestUserLogin(formSubmitValue.username, formSubmitValue.password);
 
-      if (res.code === 0) {
-        messageApi.error(res.errorMessage);
+      if ('errors' in res) {
+        messageApi.error(res.errors[0].message);
 
         return;
       }
 
       messageApi.success('登录成功！');
-      setUserToken(res.data.token);
-      setUserInfo(res.data.userInfo);
+      setUserToken(res.data.user.login.token);
+      setUserInfo(res.data.user.login.userInfo);
       navigate('/Home');
     });
   }
