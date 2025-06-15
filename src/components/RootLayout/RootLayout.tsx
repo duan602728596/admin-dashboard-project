@@ -2,6 +2,7 @@ import type { ReactElement } from 'react';
 import { Outlet } from 'react-router';
 import { Layout } from 'antd';
 import HeaderActions from './HeaderActions';
+import SiderMenu from './SiderMenu';
 
 /* 网站除了登录外，其他的UI使用的布局 */
 function RootLayout(props: {}): ReactElement {
@@ -16,7 +17,11 @@ function RootLayout(props: {}): ReactElement {
         </div>
       </Layout.Header>
       <Layout>
-        <Layout.Sider></Layout.Sider>
+        <Layout.Sider>
+          <div className="h-full overflow-auto">
+            <SiderMenu />
+          </div>
+        </Layout.Sider>
         <Layout.Content>
           <Outlet />
         </Layout.Content>

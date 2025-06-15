@@ -40,7 +40,7 @@ function Login(props: {}): ReactElement {
       messageApi.success('登录成功！');
       setUserToken(res.data.token);
       setUserInfo(res.data.userInfo);
-      navigate('/');
+      navigate('/Home');
     });
   }
 
