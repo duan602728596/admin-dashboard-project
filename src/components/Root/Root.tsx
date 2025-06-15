@@ -17,9 +17,7 @@ function Root(props: {}): ReactElement | null {
 
   // 加载数据
   function getUserInfoData(): void {
-    if (!userToken) return;
-
-    if (userInfo) return;
+    if (!userToken || userInfo) return;
 
     userInfoStartTransition(async (): Promise<void> => {
       const res: UserInfoResponse = await requestUserInfo();
