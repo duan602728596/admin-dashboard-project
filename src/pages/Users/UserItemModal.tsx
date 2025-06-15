@@ -7,17 +7,12 @@ import { UserStatus } from '../../enum/userStatus.enum';
 import { Permissions } from '../../enum/permissions.enum';
 import { genderRadioOptions, statusRadioOptions, permissionsRadioOptions } from './utils/formOptions';
 import type { UserItem } from '../../interface/user.interface';
-
-export interface FormValue extends Omit<UserItem, 'uid' | 'permissions' | 'birthday'> {
-  confirmPassword?: string;
-  permissions: Permissions; // 目前表单里的权限是单选，后期可以拆分成多选，用来针对更新颗粒度的权限
-  birthday: Dayjs;
-}
+import type { UserItemModalFormValue } from './utils/types';
 
 interface UserItemModalProps {
   open: boolean;   // Modal的显示状态
   item?: UserItem; // 如果有item是修改，否则是添加
-  onFormSubmit(values: FormValue, u: UserItem | undefined): (void | Promise<void>); // 表单确认，并提交
+  onFormSubmit(values: UserItemModalFormValue, u: UserItem | undefined): (void | Promise<void>); // 表单确认，并提交
   onClose(event: MouseEvent<HTMLButtonElement>): void; // 关闭弹出层
 }
 
@@ -37,7 +32,7 @@ const genderRules: Array<Rule> = [{ required: true, message: '必须选择性别
 /* 添加和修改用户信息的表单 */
 function UserItemModal(props: UserItemModalProps): ReactElement {
   const { open, item, onFormSubmit, onClose }: UserItemModalProps = props;
-  const [form]: [FormInstance<FormValue>] = Form.useForm();
+  const [form]: [FormInstance<UserItemModalFormValue>] = Form.useForm();
 
   // 定义表单验证
   const passwordRules: Array<Rule> = [
@@ -61,7 +56,7 @@ function UserItemModal(props: UserItemModalProps): ReactElement {
 
   // 表单确认
   async function handleFormSubmitClick(event: MouseEvent<HTMLButtonElement>): Promise<void> {
-    let val: FormValue;
+    let val: UserItemModalFormValue;
 
     try {
       val = await form.validateFields();
@@ -74,7 +69,7 @@ function UserItemModal(props: UserItemModalProps): ReactElement {
 
   useEffect(function(): void {
     if (open && item) {
-      const v: FormValue = {
+      const v: UserItemModalFormValue = {
         ...omit(item, ['uid', 'password', 'permissions', 'birthday']),
         permissions: item.permissions[0],
         birthday: dayjs(item.birthday)

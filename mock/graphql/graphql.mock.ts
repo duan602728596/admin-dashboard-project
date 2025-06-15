@@ -2,7 +2,7 @@ import { defineMock } from 'vite-plugin-mock-dev-server';
 import { graphql, type ExecutionResult } from 'graphql';
 // @ts-expect-error
 import type { Connect } from 'vite';
-import type { MockRequest, MockResponse } from '../types';
+import type { MockRequest, MockResponse } from '../commonTypes';
 import { graphQLSchema } from './graphqlSchema';
 import { graphQLRootValue } from './graphqlRootValue';
 

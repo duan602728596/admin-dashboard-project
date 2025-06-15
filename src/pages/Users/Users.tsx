@@ -10,8 +10,9 @@ import { requestUserList, requestUserAdd, requestUpdateUser, type UserListRespon
 import { Permissions } from '../../enum/permissions.enum';
 import { UserGender } from '../../enum/gender.enum';
 import { UserStatus } from '../../enum/userStatus.enum';
-import UserItemModal, { type FormValue } from './UserItemModal';
+import UserItemModal from './UserItemModal';
 import type { UserItem, UserListSearchFormSubmitValue } from '../../interface/user.interface';
+import type { UserItemModalFormValue } from './utils/types';
 
 /* 用户页面 */
 function Users(props: {}): ReactElement {
@@ -80,7 +81,7 @@ function Users(props: {}): ReactElement {
   }
 
   // 提交
-  async function handleModalValueSubmitClick(value: FormValue, item: UserItem | undefined): Promise<void> {
+  async function handleModalValueSubmitClick(value: UserItemModalFormValue, item: UserItem | undefined): Promise<void> {
     let res: UserAddOrUpdateResponse;
 
     if (item) {
