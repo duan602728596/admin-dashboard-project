@@ -1,30 +1,30 @@
-import { useState, useEffect, useTransition, type ReactElement, type Dispatch as D, type SetStateAction as S, type TransitionStartFunction } from 'react';
-import { Table, App } from 'antd';
+import { Fragment, useState, useEffect, useTransition, type ReactElement, type Dispatch as D, type SetStateAction as S, type TransitionStartFunction, type MouseEvent } from 'react';
+import { Table, App, Button } from 'antd';
 import type { useAppProps as UseAppProps } from 'antd/es/app/context';
-import type {
-  ColumnType,
-  SortOrder,
-  FilterValue,
-  SorterResult,
-  TablePaginationConfig,
-  TableCurrentDataSource
-} from 'antd/es/table/interface';
+import type { ColumnType, SortOrder, FilterValue, SorterResult, TablePaginationConfig, TableCurrentDataSource } from 'antd/es/table/interface';
+import { PlusCircleFilled as IconPlusCircleFilled } from '@ant-design/icons';
 import auth from '../../components/basic/auth/auth';
 import SearchForm from './SearchForm';
 import { requestUserList, type UserListResponse } from '../../services/graphql';
 import { Permissions } from '../../enum/permissions.enum';
 import { UserGender } from '../../enum/gender.enum';
 import { UserStatus } from '../../enum/userStatus.enum';
+import UserItemModal, { type FormValue } from './UserItemModal';
 import type { UserItem, UserListSearchFormSubmitValue } from '../../interface/user.interface';
 
 /* 用户页面 */
 function Users(props: {}): ReactElement {
   const { message: messageApi }: UseAppProps = App.useApp();
+  // 列表相关查询
   const [query, setQuery]: [UserListSearchFormSubmitValue, D<S<UserListSearchFormSubmitValue>>] = useState({}); // 查询条件
   const [current, setCurrent]: [number, D<S<number>>] = useState(1); // 分页
   const [birthdaySortOrder, setBirthdaySortOrder]: [SortOrder, D<S<SortOrder>>] = useState(null);
   const [listLength, setListLength]: [number, D<S<number>>] = useState(0); // 结果数量
   const [userList, setUserList]: [Array<UserItem>, D<S<Array<UserItem>>>] = useState([]); // 查询结果
+  // 表单相关
+  const [userInfoModalOpen, setUserInfoModalOpen]: [boolean, D<S<boolean>>] = useState(false);
+  const [userInfoModalItem, setUserInfoModalItem]: [UserItem | undefined, D<S<UserItem | undefined>>] = useState(undefined);
+
   const [loading, userListStartTransition]: [boolean, TransitionStartFunction] = useTransition();
 
   /**
@@ -72,6 +72,28 @@ function Users(props: {}): ReactElement {
     }
   }
 
+  // 弹出层关闭
+  function handleModalClose(event: MouseEvent<HTMLButtonElement>): void {
+    setUserInfoModalOpen(false);
+    setUserInfoModalItem(undefined);
+  }
+
+  // 提交
+  function handleModalValueSubmitClick(value: FormValue, item: UserItem | undefined): void {
+    console.log(value, item);
+  }
+
+  // 点击添加新用户
+  function handleAddNewUserClick(event: MouseEvent<HTMLButtonElement>): void {
+    setUserInfoModalOpen(true);
+  }
+
+  // 点击修改用户
+  function handleUpdateUserClick(record: UserItem, event: MouseEvent<HTMLButtonElement>): void {
+    setUserInfoModalItem(record);
+    setUserInfoModalOpen(true);
+  }
+
   const columns: Array<ColumnType<UserItem>> = [
     { title: '用户名', dataIndex: 'username' },
     {
@@ -97,6 +119,11 @@ function Users(props: {}): ReactElement {
     {
       title: '账号状态',
       render: (value: UserStatus): ReactElement | string => value === UserStatus.Deactivated ? <span className="text-[#f5222d]">停用</span> : '正常'
+    },
+    {
+      title: '操作',
+      key: 'action',
+      render: (_v: undefined, record: UserItem): ReactElement => <Button onClick={ (e: MouseEvent<HTMLButtonElement>): void => handleUpdateUserClick(record, e) }>修改</Button>
     }
   ];
 
@@ -105,22 +132,32 @@ function Users(props: {}): ReactElement {
   }, []);
 
   return (
-    <div className="p-[20px]">
-      <SearchForm onSearch={ handleFormSearch } />
-      <Table size="middle"
-        dataSource={ userList }
-        columns={ columns }
-        loading={ loading }
-        rowKey="uid"
-        pagination={{
-          current,
-          pageSize: 5,
-          total: listLength,
-          onChange: handlePageChange
-        }}
-        onChange={ handleTableChange }
-      />
-    </div>
+    <Fragment>
+      <div className="p-[20px]">
+        <div className="flex mb-[20px]">
+          <div className="grow">
+            <SearchForm onSearch={ handleFormSearch } />
+          </div>
+          <div>
+            <Button type="primary" icon={ <IconPlusCircleFilled /> } onClick={ handleAddNewUserClick }>添加新用户</Button>
+          </div>
+        </div>
+        <Table size="middle"
+          dataSource={ userList }
+          columns={ columns }
+          loading={ loading }
+          rowKey="uid"
+          pagination={{
+            current,
+            pageSize: 5,
+            total: listLength,
+            onChange: handlePageChange
+          }}
+          onChange={ handleTableChange }
+        />
+      </div>
+      <UserItemModal open={ userInfoModalOpen } item={ userInfoModalItem } onClose={ handleModalClose } onFormSubmit={ handleModalValueSubmitClick } />
+    </Fragment>
   );
 }
 

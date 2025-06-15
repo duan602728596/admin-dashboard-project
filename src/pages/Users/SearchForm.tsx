@@ -64,7 +64,7 @@ function SearchForm(props: SearchFormProps): ReactElement {
   }
 
   return (
-    <Form className="mb-[20px]" form={ form } layout="inline" initialValues={ formInitialState } onFinish={ handleSearchFinish }>
+    <Form form={ form } layout="inline" initialValues={ formInitialState } onFinish={ handleSearchFinish }>
       <Form.Item name="username" label="用户名">
         <Input className="w-[200px]" allowClear={ true } />
       </Form.Item>
