@@ -1,5 +1,5 @@
-import { useEffect, useTransition, type TransitionStartFunction, type ReactElement } from 'react';
-import { useNavigate, NavigateFunction } from 'react-router';
+import { useTransition, type TransitionStartFunction, type ReactElement } from 'react';
+import { Navigate, useLocation, useNavigate, type NavigateFunction, type Location } from 'react-router';
 import { Form, Input, Button, App, type FormInstance } from 'antd';
 import type { Rule } from 'antd/es/form';
 import type { useAppProps as UseAppProps } from 'antd/es/app/context';
@@ -22,9 +22,11 @@ const usernameRules: Array<Rule> = [{ required: true, whitespace: true, message:
 function Login(props: {}): ReactElement {
   const { setUserInfo }: UserInfoStore = useUserInfoStore();
   const navigate: NavigateFunction = useNavigate();
+  const location: Location = useLocation();
   const [form]: [FormInstance<FormSubmitValue>] = Form.useForm();
   const { message: messageApi }: UseAppProps = App.useApp();
   const [loginLoading, loginStartTransition]: [boolean, TransitionStartFunction] = useTransition();
+  const userToken: string | null = getUserToken(); // 根据token判断是否跳转
 
   // 点击登录
   function handleLoginFormFinish(formSubmitValue: FormSubmitValue): void {
@@ -44,12 +46,8 @@ function Login(props: {}): ReactElement {
     });
   }
 
-  useEffect(function() {
-    // 已登录的情况下跳转到首页
-    const userToken: string | null = getUserToken();
-
-    userToken && navigate('/Home');
-  }, []);
+  // token存在时直接跳转到首页
+  if (userToken) return <Navigate to="/Home" replace={ true } state={{ from: location }} />;
 
   return (
     <div className={ cs('w-full h-full content-center', style.container) }>

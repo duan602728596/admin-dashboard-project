@@ -1,5 +1,5 @@
 import { useEffect, useTransition, type ReactElement, type TransitionStartFunction } from 'react';
-import { useNavigate, NavigateFunction } from 'react-router';
+import { Navigate, useLocation, type Location } from 'react-router';
 import { App } from 'antd';
 import type { useAppProps as UseAppProps } from 'antd/es/app/context';
 import RootLayout from '../RootLayout/RootLayout';
@@ -9,21 +9,15 @@ import { getUserToken } from '../../utils/userToken';
 
 /* 根组件，判断是否登录，并且在登录后每次加载时重新获取用户信息 */
 function Root(props: {}): ReactElement | null {
-  const navigate: NavigateFunction = useNavigate();
+  const location: Location = useLocation();
   const { userInfo, setUserInfo }: UserInfoStore = useUserInfoStore();
   const [userInfoLoading, userInfoStartTransition]: [boolean, TransitionStartFunction] = useTransition();
   const { message: messageApi }: UseAppProps = App.useApp();
+  const userToken: string | null = getUserToken(); // 根据token判断是否跳转
 
   // 加载数据
   function getUserInfoData(): void {
-    const token: string | null = getUserToken();
-
-    // 先判断权限
-    if (!token) {
-      navigate('/Login');
-
-      return;
-    }
+    if (!userToken) return;
 
     if (userInfo) return;
 
@@ -43,6 +37,9 @@ function Root(props: {}): ReactElement | null {
   useEffect(function(): void {
     getUserInfoData();
   }, []);
+
+  // token不存在时直接跳转到登录页
+  if (!userToken) return <Navigate to="/Login" replace={ true } state={{ from: location }} />;
 
   return <RootLayout />;
 }
