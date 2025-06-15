@@ -13,6 +13,10 @@
 开发环境：Node版本大于等于23.3.0。
 项目的技术栈：Vite、React、Sass、TypeScript、Zustand、TailwindCSS、antd、GraphQL。
 
+## Mock的账户
+
+`test_0`到`test_11`，密码为`12345678`。
+
 ## 项目运行和打包
 
 * 启动：运行`node --run dev`，浏览器打开：http://localhost:5700 。
