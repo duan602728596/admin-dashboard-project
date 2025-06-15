@@ -15,7 +15,7 @@ const genderOptions: Array<DefaultOptionType> = [
 const statusOptions: Array<DefaultOptionType> = [
   { value: 'all', label: '所有' },
   { value: UserStatus.Available, label: '可用' },
-  { value: UserStatus.Deactivated, label: '不可用' }
+  { value: UserStatus.Deactivated, label: <span className="text-[#f5222d]">停用</span> }
 ];
 
 // 初始化表单的值

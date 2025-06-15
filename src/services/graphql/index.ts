@@ -1,7 +1,7 @@
 import type { SortOrder } from 'antd/es/table/interface';
 import { request, type RequestOptions } from '../../utils/request';
-import type { UserLoginResponse, UserInfoResponse, UserListResponse } from './interface';
-import type { UserListSearchFormSubmitValue } from '../../interface/user.interface';
+import type { UserLoginResponse, UserInfoResponse, UserListResponse, UserAddOrUpdateResponse } from './interface';
+import type { UserItem, UserListSearchFormSubmitValue } from '../../interface/user.interface';
 
 export type * from './interface';
 
@@ -102,6 +102,56 @@ export function requestUserList(current: number, search: UserListSearchFormSubmi
         current,
         search: JSON.stringify(search),
         birthdaySortOrder
+      }
+    }
+  });
+}
+
+/**
+ * 添加新用户
+ * @param { Omit<UserItem, 'uid'> } item - 分页
+ */
+export function requestUserAdd(item: Omit<UserItem, 'uid'>): Promise<UserAddOrUpdateResponse> {
+  return request({
+    ...graphqlRequestDefaultOptions,
+    body: {
+      query: /* GraphQL */`
+        query($item: String!) {
+          user {
+            add(item: $item) {
+              success
+            }
+          }
+        }
+      `,
+      variables: {
+        item: JSON.stringify(item)
+      }
+    }
+  });
+}
+
+/**
+ * 修改用户信息
+ * @param { string } uid
+ * @param { Omit<UserItem, 'uid'> } item - 分页
+ */
+export function requestUpdateUser(uid: string, item: Omit<UserItem, 'uid' | 'password' | 'username'>): Promise<UserAddOrUpdateResponse> {
+  return request({
+    ...graphqlRequestDefaultOptions,
+    body: {
+      query: /* GraphQL */`
+        query($item: String!, $uid: String!) {
+          user {
+            update(item: $item, uid: $uid) {
+              success
+            }
+          }
+        }
+      `,
+      variables: {
+        item: JSON.stringify(item),
+        uid
       }
     }
   });

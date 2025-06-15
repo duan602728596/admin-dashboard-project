@@ -34,3 +34,10 @@ export type UserListResponse = GraphQLResponseData<{
     list: UserListResponseData
   }
 }>;
+
+// 添加修改账号后的结果
+export type UserAddOrUpdateResponse = GraphQLResponseData<{
+  user: {
+    success: boolean;
+  }
+}>;

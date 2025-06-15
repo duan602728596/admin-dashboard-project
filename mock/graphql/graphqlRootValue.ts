@@ -18,11 +18,21 @@ interface UserListVariableValues {
   birthdaySortOrder: SortOrder;
 }
 
+interface UserAddVariableValues {
+  item: string;
+}
+
+interface UserUpdateVariableValues extends UserAddVariableValues {
+  uid: string;
+}
+
 interface GraphqlRootValue {
   user: {
-    login(variableValues: UserLoginVariableValues): UserLoginResponseData;
+    login(variableValues: UserLoginVariableValues, context: GraphQLContext): UserLoginResponseData;
     info(variableValues: null, context: GraphQLContext): Omit<UserItem, 'password'>;
     list(variableValues: UserListVariableValues, contextValues: GraphQLContext): UserListResponseData;
+    add(variableValues: UserAddVariableValues, context: GraphQLContext): { success: boolean };
+    update(variableValues: UserUpdateVariableValues, contextValues: GraphQLContext): { success: boolean };
   };
 }
 
@@ -85,7 +95,7 @@ export const graphQLRootValue: GraphqlRootValue = {
       }
 
       // 状态
-      if (searchObject.status) {
+      if (typeof searchObject.status === 'number') {
         formatUserList = formatUserList.filter((o: Omit<UserItem, 'password'>): boolean => o.status === searchObject.status);
       }
 
@@ -105,6 +115,39 @@ export const graphQLRootValue: GraphqlRootValue = {
           length: formatUserList.length
         }
       };
+    },
+
+    // 添加新用户
+    add(variableValues: UserAddVariableValues, contextValues: GraphQLContext): { success: boolean } {
+      if (!contextValues.token) throw new Error('需要先登录');
+
+      const { item }: UserAddVariableValues = variableValues;
+      const endUserItem: UserItem | undefined = userList.at(-1);
+      const uid: string = String(Number(endUserItem?.uid ?? 0) + 1);
+
+      userList.push({
+        uid,
+        ...JSON.parse(item)
+      });
+
+      return { success: true };
+    },
+
+    // 更新用户
+    update(variableValues: UserUpdateVariableValues, contextValues: GraphQLContext): { success: boolean } {
+      if (!contextValues.token) throw new Error('需要先登录');
+
+      const { item, uid }: UserUpdateVariableValues = variableValues;
+      const userItemIndex: number = userList.findIndex((o: UserItem): boolean => o.uid === uid);
+
+      if (userItemIndex < 0) throw new Error('账户不存在');
+
+      const itemObject: UserItem = JSON.parse(item);
+      const updateItem: Omit<UserItem, 'password' | 'uid' | 'username'> = omit(itemObject, ['password', 'uid', 'username']);
+
+      Object.assign(userList[userItemIndex], updateItem);
+
+      return { success: true };
     }
   }
 };

@@ -3,9 +3,10 @@ import { Table, App, Button } from 'antd';
 import type { useAppProps as UseAppProps } from 'antd/es/app/context';
 import type { ColumnType, SortOrder, FilterValue, SorterResult, TablePaginationConfig, TableCurrentDataSource } from 'antd/es/table/interface';
 import { PlusCircleFilled as IconPlusCircleFilled } from '@ant-design/icons';
+import { omit } from 'lodash-es';
 import auth from '../../components/basic/auth/auth';
 import SearchForm from './SearchForm';
-import { requestUserList, type UserListResponse } from '../../services/graphql';
+import { requestUserList, requestUserAdd, requestUpdateUser, type UserListResponse, type UserAddOrUpdateResponse } from '../../services/graphql';
 import { Permissions } from '../../enum/permissions.enum';
 import { UserGender } from '../../enum/gender.enum';
 import { UserStatus } from '../../enum/userStatus.enum';
@@ -79,8 +80,37 @@ function Users(props: {}): ReactElement {
   }
 
   // 提交
-  function handleModalValueSubmitClick(value: FormValue, item: UserItem | undefined): void {
-    console.log(value, item);
+  async function handleModalValueSubmitClick(value: FormValue, item: UserItem | undefined): Promise<void> {
+    let res: UserAddOrUpdateResponse;
+
+    if (item) {
+      res = await requestUpdateUser(item.uid, {
+        email: value.email,
+        status: value.status,
+        birthday: value.birthday.format('YYYY-MM-DD'),
+        permissions: [value.permissions],
+        gender: value.gender
+      });
+    } else {
+      res = await requestUserAdd(Object.assign(
+        omit(value, ['confirmPassword', 'birthday', 'permissions']),
+        {
+          birthday: value.birthday.format('YYYY-MM-DD'),
+          permissions: [value.permissions]
+        }
+      ));
+    }
+
+    if ('errors' in res) {
+      messageApi.error(res.errors[0].message);
+
+      return;
+    }
+
+    messageApi.success(item ? `用户【${ item.username }】的信息修改成功！` : '新用户添加成功！');
+    setUserInfoModalOpen(false);
+    setUserInfoModalItem(undefined);
+    getUserList(current, query, birthdaySortOrder);
   }
 
   // 点击添加新用户
@@ -118,6 +148,7 @@ function Users(props: {}): ReactElement {
     },
     {
       title: '账号状态',
+      dataIndex: 'status',
       render: (value: UserStatus): ReactElement | string => value === UserStatus.Deactivated ? <span className="text-[#f5222d]">停用</span> : '正常'
     },
     {

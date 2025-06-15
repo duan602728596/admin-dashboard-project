@@ -1,4 +1,4 @@
-import { useEffect, type ReactElement, type MouseEvent } from 'react';
+import { Fragment, useEffect, type ReactElement, type MouseEvent } from 'react';
 import { Form, Modal, Input, Radio, DatePicker, type FormInstance } from 'antd';
 import type { CheckboxOptionType } from 'antd/es/checkbox/Group';
 import type { Rule } from 'antd/es/form';
@@ -59,7 +59,7 @@ function UserItemModal(props: UserItemModalProps): ReactElement {
   // 定义表单验证
   const passwordRules: Array<Rule> = [
     !item && { required: true, whitespace: true, message: '必须输入密码' },
-    { len: 6, message: '密码长度必须在6位以上' }
+    { min: 6, message: '密码长度必须在6位以上' }
   ].filter(Boolean) as Array<Rule>;
   const confirmPasswordRules: Array<Rule> = [
     !item && { required: true, whitespace: true, message: '必须输入确认密码' },
@@ -121,12 +121,18 @@ function UserItemModal(props: UserItemModalProps): ReactElement {
             </Form.Item>
           )
         }
-        <Form.Item name="password" label="密码" rules={ passwordRules }>
-          <Input.Password />
-        </Form.Item>
-        <Form.Item name="confirmPassword" label="确认密码" rules={ confirmPasswordRules }>
-          <Input.Password />
-        </Form.Item>
+        {
+          item ? null : (
+            <Fragment>
+              <Form.Item name="password" label="初始密码" rules={ passwordRules }>
+                <Input.Password />
+              </Form.Item>
+              <Form.Item name="confirmPassword" label="确认密码" rules={ confirmPasswordRules }>
+                <Input.Password />
+              </Form.Item>
+            </Fragment>
+          )
+        }
         <Form.Item name="email" label="邮箱" rules={ emailRules }>
           <Input />
         </Form.Item>
