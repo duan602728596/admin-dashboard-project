@@ -7,21 +7,8 @@ import { UserStatus } from '../../src/enum/userStatus.enum';
 import type { MockRequest, MockResponse } from '../types';
 import type { UserItem } from '../../src/interface/user.interface';
 
+/* 账号登录 */
 export default defineMock([
-  // 请求账户列表
-  {
-    method: 'POST',
-    url: '/api/users/list',
-    response(req: MockRequest, res: MockResponse, next: Connect.NextFunction): void {
-      res.write(JSON.stringify({
-        code: 1,
-        data: userList.map((o: UserItem): UserItem => omit(o, ['password']))
-      }));
-      res.end();
-    }
-  },
-
-  // 登录
   {
     method: 'POST',
     url: '/api/user/login',
@@ -70,44 +57,6 @@ export default defineMock([
           userInfo: omit(userItem, ['password']),
           token: `${ userItem.uid }_${ random(10000, 99999) }`
         }
-      }));
-      res.end();
-    }
-  },
-
-  // 根据token请求账户信息
-  {
-    method: 'GET',
-    url: '/api/user/info',
-    response(req: MockRequest, res: MockResponse, next: Connect.NextFunction): void {
-      const token: string | undefined = req.headers.token;
-
-      if (!token) {
-        res.write(JSON.stringify({
-          code: 0,
-          errorMessage: '需要先登录'
-        }));
-        res.end();
-
-        return;
-      }
-
-      const [uid]: Array<string> = token.split('_');
-      const userItem: UserItem | undefined = userList.find((o: UserItem): boolean => o.uid === uid);
-
-      if (!userItem) {
-        res.write(JSON.stringify({
-          code: 0,
-          errorMessage: '账号不存在'
-        }));
-        res.end();
-
-        return;
-      }
-
-      res.write(JSON.stringify({
-        code: 1,
-        data: omit(userItem, ['password'])
       }));
       res.end();
     }
